@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,PasswordField,BooleanField,SubmitField
-from wtforms.validators import DataRequired,ValidationError,Email,EqualTo
+from wtforms import StringField,TextAreaField,PasswordField,BooleanField,SubmitField
+from wtforms.validators import DataRequired,Length
+from wtforms.validators import ValidationError,Email,EqualTo
 from app.models import User
 
 #'''用来处理登录信息的文件'''
@@ -14,10 +15,10 @@ class LoginForm(FlaskForm):
 #'''处理注册信息的文件'''
 class RegistrationForm(FlaskForm):
     username=StringField('用户名',validators=[DataRequired()])
-    email=StringField('邮箱',validators=[DataRequired(),Email()])
-    password=PasswordField('密码',validators=[DataRequired()])
+    email=StringField(validators=[DataRequired(),Email(message='电子邮箱不符合规范')])
+    password=PasswordField('密码',validators=[DataRequired(message='密码太过简单')])
     password2=PasswordField(
-        '重复密码',validators=[DataRequired(),EqualTo('password')]
+        '重复密码',validators=[DataRequired(message='密码不一致'),EqualTo('password')]
     )
     submit=SubmitField('注册')
     #校验用户名是否重复
@@ -30,3 +31,14 @@ class RegistrationForm(FlaskForm):
         user=User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('该邮箱已被注册，请更换新的邮箱！')
+    
+    #校验密码
+    def validate_password(self,password):
+        if password.data is None:
+            raise ValidationError('密码不能为空')
+
+#'''修改个人信息'''
+class EditProfileForm(FlaskForm):
+    username=StringField('用户名',validators=[DataRequired(message='请输入用户名！')])
+    about_me=TextAreaField('关于我',validators=[Length(min=0,max=140)])
+    submit=SubmitField('提交')

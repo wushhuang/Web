@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>登录</h1>
-    <p>还没注册?<a href="{{url_for('register')}}">点击一下就可以注册哦</a></p>
+   
     <form action="" method="POST">
         <!--用来实现在配置中激活csrf保护-->
         {{form.hidden_tag()}}
@@ -21,6 +21,14 @@
             {% endfor %}
         </p>
         <p>{{form.remember_me()}} {{form.remember_me.label}}</p>
-        <p>{{form.submit()}}</p>
+        <div>
+            <table>
+                <tr>
+                    <td>{{form.submit()}}</td>
+                    <td>还没注册?<a href="{{url_for('register')}}">点击注册</a></td>
+                </tr>
+            </table>
+        </div>
+
     </form>
 {% endblock %}
