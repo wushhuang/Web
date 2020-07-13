@@ -8,7 +8,9 @@ from hashlib import md5
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
-
+def load_post(username):
+    u_id = User.query.filter_by(username=username).first.id
+    return Post.query.filter_by(user_id=u_id).body
 
 #添加数据库表 User
 class User(UserMixin,db.Model):
@@ -46,3 +48,33 @@ class Post(db.Model):
     user_id=db.Column(db.Integer,db.ForeignKey('user.id'))
     def __repr__(self):
         return '<Post{}>'.format(self.body)
+#香客信息
+class xiangke(UserMixin,db.Model):
+    __tablename__='xiangke'
+    id=db.Column(db.Integer,primary_key=True)
+    name=db.Column(db.String(32))
+    age=db.Column(db.Integer)
+    jiguan=db.Column(db.Strint(140))
+    zhiye=db.Column(db.String(32))
+    dizhi=db.Column(db.STring(140))
+    dianhua=db.Column(db.Integer,index=True,unique=True)
+    email=db.Column(db.STring(120),index=True,unique=True)
+
+class yuding(db.Model):
+    __tablename__='yuding'
+    id=db.Column(db.Integer,primary_key=True)
+    user_id=db.Column(db.Integer,db.ForeignKey('xiangke.id'))
+    timestamp=db.Column(db.datetime)
+
+class xiangmu(db.Model):
+    __tablename__='xiangmu'
+    id=db.Column(db.Integer,primary_key=True)
+    cate=db.Column(db.String(32))
+
+class xiangfang(db.Model):
+    __tablename__='xiangfang'
+    id=db.Column(db.Integer,primary_key=True)
+    fanghao=db.Column(db.Integer,Index=True,unique=True)
+    info=db.Column(db.Integer,default=0)   #0 空闲 1预定 2入住
+
+

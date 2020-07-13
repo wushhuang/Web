@@ -8,11 +8,12 @@ from app.forms import LoginForm
 #导入登录插件
 from flask_login import current_user,login_user,logout_user
 from flask_login import login_required
-from app.models import User
+from app.models import User,Post
 #注册插件
 from app import db
 from app.forms import RegistrationForm
 from app.forms import EditProfileForm
+from app.forms import Write
 #时间模块
 from datetime import datetime
 
@@ -22,17 +23,8 @@ from datetime import datetime
 #必须登录才能访问首页
 @login_required
 def index():
-    user={'username':'一方通行'}
-    posts=[
-        {
-            'author':{'username':'刘'},
-            'body':'这是模块循环一'
-        },
-        {
-            'author':{'username':'小强'},
-            'body':'这是模块循环2'
-        }
-    ]
+    user=current_user.username
+    posts=Post.query.all()
     return render_template('index.html',title='首页',user=user,posts=posts)
 
 @app.route('/register',methods=['Get','POST'])
@@ -47,14 +39,14 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('恭喜你成为我站的新用户！')
-        return redirect(url_for('login'))
+        return redirect(url_for('user',username=user.username))
     return render_template('register.html',title='注册',form=form)
-
+#登录
 @app.route('/login',methods=['GET','POST'])
 def login():
     #判断当前用户是否验证，通过的返回首页
     if current_user.is_authenticated:
-        return redirect(url_for('user',username=form.username.date))
+        return redirect(url_for('user',username=current_user.username))
 
     #创建一个表单实例
     form=LoginForm()
@@ -88,18 +80,15 @@ def logout():
 @login_required
 def user(username):
     user=User.query.filter_by(username=username).first_or_404()
-    posts=[
-        {'author':user,'body':'测试Post#1号'},
-        {'author':user,'body':'测试Post#2号'}
-    ]
+    posts=user.posts.all()
     return render_template('user.html',title='用户信息',user=user,posts=posts)
-#返回登录时间
+#写入登录时间
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
-
+#返回发帖信息
 #编辑个人资料
 @app.route('/edit_profile',methods=['GET','POST'])
 @login_required
@@ -115,4 +104,14 @@ def edit_profile():
         form.username.data=current_user.username
         form.about_me.data=current_user.about_me
     return render_template('edit_profile.html',title='个人资料编辑',form=form)
-
+#发布动态
+@app.route('/write',methods=['GET','POST'])
+def write():
+    form=Write()
+    if form.validate_on_submit():
+        post=Post(body=form.write.data,user_id=current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash("发布成功！")
+        return redirect(url_for('user',username=current_user.username))
+    return render_template('write.html',title='发布动态',form=form)

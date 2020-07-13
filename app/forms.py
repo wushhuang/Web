@@ -42,3 +42,8 @@ class EditProfileForm(FlaskForm):
     username=StringField('用户名',validators=[DataRequired(message='请输入用户名！')])
     about_me=TextAreaField('关于我',validators=[Length(min=0,max=140)])
     submit=SubmitField('提交')
+
+#'''发表动态'''
+class Write(FlaskForm):
+    write=StringField('正文',validators=[Length(min=5,max=9999),DataRequired(message="请输入文字内容")])
+    submit=SubmitField('发布')
