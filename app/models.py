@@ -54,17 +54,17 @@ class xiangke(UserMixin,db.Model):
     id=db.Column(db.Integer,primary_key=True)
     name=db.Column(db.String(32))
     age=db.Column(db.Integer)
-    jiguan=db.Column(db.Strint(140))
+    jiguan=db.Column(db.String(140))
     zhiye=db.Column(db.String(32))
-    dizhi=db.Column(db.STring(140))
+    dizhi=db.Column(db.String(140))
     dianhua=db.Column(db.Integer,index=True,unique=True)
-    email=db.Column(db.STring(120),index=True,unique=True)
+    email=db.Column(db.String(120),index=True,unique=True)
 
 class yuding(db.Model):
     __tablename__='yuding'
     id=db.Column(db.Integer,primary_key=True)
     user_id=db.Column(db.Integer,db.ForeignKey('xiangke.id'))
-    timestamp=db.Column(db.datetime)
+    timestamp=db.Column(db.DateTime)
 
 class xiangmu(db.Model):
     __tablename__='xiangmu'
@@ -74,7 +74,7 @@ class xiangmu(db.Model):
 class xiangfang(db.Model):
     __tablename__='xiangfang'
     id=db.Column(db.Integer,primary_key=True)
-    fanghao=db.Column(db.Integer,Index=True,unique=True)
+    fanghao=db.Column(db.Integer,index=True,unique=True)
     info=db.Column(db.Integer,default=0)   #0 空闲 1预定 2入住
 
 
