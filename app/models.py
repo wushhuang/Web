@@ -48,33 +48,3 @@ class Post(db.Model):
     user_id=db.Column(db.Integer,db.ForeignKey('user.id'))
     def __repr__(self):
         return '<Post{}>'.format(self.body)
-#香客信息
-class xiangke(UserMixin,db.Model):
-    __tablename__='xiangke'
-    id=db.Column(db.Integer,primary_key=True)
-    name=db.Column(db.String(32))
-    age=db.Column(db.Integer)
-    jiguan=db.Column(db.String(140))
-    zhiye=db.Column(db.String(32))
-    dizhi=db.Column(db.String(140))
-    dianhua=db.Column(db.Integer,index=True,unique=True)
-    email=db.Column(db.String(120),index=True,unique=True)
-
-class yuding(db.Model):
-    __tablename__='yuding'
-    id=db.Column(db.Integer,primary_key=True)
-    user_id=db.Column(db.Integer,db.ForeignKey('xiangke.id'))
-    timestamp=db.Column(db.DateTime)
-
-class xiangmu(db.Model):
-    __tablename__='xiangmu'
-    id=db.Column(db.Integer,primary_key=True)
-    cate=db.Column(db.String(32))
-
-class xiangfang(db.Model):
-    __tablename__='xiangfang'
-    id=db.Column(db.Integer,primary_key=True)
-    fanghao=db.Column(db.Integer,index=True,unique=True)
-    info=db.Column(db.Integer,default=0)   #0 空闲 1预定 2入住
-
-
